@@ -2,13 +2,60 @@
     x:Class="E_media.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:E_media"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <muxc:TabView x:Name="TabViewControl" CanReorderTabs="False" IsAddTabButtonVisible="False" >
+        <muxc:TabViewItem Header="Home" IsClosable="False">
+            <Grid>
+                <Button Content="Open SVG Image" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </muxc:TabViewItem>
+        <muxc:TabViewItem x:Name="ImageTab" Header="Image" Visibility="Collapsed" CloseRequested="ImageTab_CloseRequested">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-    </Grid>
+                <Image Grid.Column="0" x:Name="ImageControl"/>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="MetadataButton" Grid.Row="0" Content="Show Metadata" HorizontalAlignment="Center" VerticalAlignment="Center" Click="MetadataButton_Click"/>
+                    <Button Grid.Row="1" Content="Show Fourier Transform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button Grid.Row="2" Content="Clear Metadata" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                </Grid>
+            </Grid>
+
+        </muxc:TabViewItem>
+        <muxc:TabViewItem x:Name="MetadataTab" Header="Metadata" Visibility="Collapsed" CloseRequested="MetadataTab_CloseRequested">
+            <ListBox x:Name="Lista" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Path=PropertyName}"/>
+                            <TextBlock Text="{Binding Path=Value}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </muxc:TabViewItem>
+        <muxc:TabViewItem x:Name="FourierTab" Header="Fouerier transform" IsClosable="False" Visibility="Collapsed" CloseRequested="FourierTab_CloseRequested">
+            
+        </muxc:TabViewItem>
+
+        <muxc:TabView.TabStripFooter>
+            <Grid x:Name="TabFooterControl" Background="Transparent" />
+        </muxc:TabView.TabStripFooter>
+        
+    </muxc:TabView>
 </Page>
