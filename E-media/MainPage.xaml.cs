@@ -34,96 +34,62 @@ namespace E_media
     public sealed partial class MainPage : Page
     {
         private Stream fileStream;
-        public List<XMLPair> Metadata { get; set; }
+        //public List<XMLPair> Metadata { get; set; }
         public MainPage()
         {
             this.InitializeComponent();
 
-
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
             Window.Current.SetTitleBar(TabFooterControl);
-
-
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private void TabViewControl_AddTabButtonClick(muxc.TabView sender, object args)
         {
-            FileOpenPicker fileOpenPicker = new FileOpenPicker();
-            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
-            fileOpenPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            fileOpenPicker.FileTypeFilter.Add(".svg");
-            StorageFile file = await fileOpenPicker.PickSingleFileAsync();
-            if (file != null)
-            {
-                OpenFile(file);
-            }
-        }
-        private void ImageTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        {
-            TabViewControl.SelectedIndex = 0;
-            ImageTab.Visibility = Visibility.Collapsed;
-            MetadataTab.Visibility = Visibility.Collapsed;
-            FourierTab.Visibility = Visibility.Collapsed;
+            var newTab = new muxc.TabViewItem();
+            newTab.Header = "Nowe SVG";
+            Frame newFrame = new Frame();
+            newTab.Content = newFrame;
+            newFrame.Navigate(typeof(NavPage));
+            sender.TabItems.Add(newTab);
+
         }
 
-        private void MetadataTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        private void TabViewControl_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
         {
-            TabViewControl.SelectedIndex = 1;
-            MetadataTab.Visibility = Visibility.Collapsed;
-            Metadata = new List<XMLPair>();
+            sender.TabItems.Remove(args.Tab);
         }
 
-        private void FourierTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        {
-            TabViewControl.SelectedIndex = 1;
-            FourierTab.Visibility = Visibility.Collapsed;
-        }
+        //private void ImageTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        //{
+        //    TabViewControl.SelectedIndex = 0;
+        //    ImageTab.Visibility = Visibility.Collapsed;
+        //    MetadataTab.Visibility = Visibility.Collapsed;
+        //    FourierTab.Visibility = Visibility.Collapsed;
+        //}
 
-        private void MetadataButton_Click(object sender, RoutedEventArgs e)
-        {
-            //Wywala się na czytaniu pierwszej linijki
-            /*
-            Metadata = new List<XMLPair>();
-            using (StreamReader reader = new StreamReader(fileStream))
-            {
-                string line = reader.ReadLine();
-                if (line.StartsWith("<?xml"))
-                {
-                    string[] pairs = line.Split();
-                    foreach(string s in pairs)
-                    {
-                        if (s.Contains('=')){
-                            Metadata.Add(ReadXMLPair(s));
-                        }
-                    }
-                }
-            }
-            Lista.ItemsSource = Metadata;
-            MetadataTab.Visibility = Visibility.Visible;
-            */
-        }
+        //private void MetadataTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        //{
+        //    TabViewControl.SelectedIndex = 1;
+        //    MetadataTab.Visibility = Visibility.Collapsed;
+        //    Metadata = new List<XMLPair>();
+        //}
 
-        private async void OpenFile(StorageFile file)
-        {
-            var stream = await file.OpenAsync(FileAccessMode.Read);
-            SvgImageSource image = new SvgImageSource();
-            await image.SetSourceAsync(stream);
-            fileStream = stream.AsStreamForRead();
-            ImageControl.Source = image;
-            ImageTab.Visibility = Visibility.Visible;
-            TabViewControl.SelectedIndex = 1;
-        }
+        //private void FourierTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        //{
+        //    TabViewControl.SelectedIndex = 1;
+        //    FourierTab.Visibility = Visibility.Collapsed;
+        //}
 
-        private XMLPair ReadXMLPair(string keyValuePair)
-        {
-            string[] s = keyValuePair.Split('=');
-            XMLPair pair = new XMLPair();
-            pair.PropertyName = s[0];
-            s[1] = s[1].Trim('"');
-            pair.Value = s[1];
-            Debug.WriteLine(pair.PropertyName + "="+pair.Value);
-            return pair;
-        }
+        //private XMLPair ReadXMLPair(string keyValuePair)
+        //{
+        //    string[] s = keyValuePair.Split('=');
+        //    XMLPair pair = new XMLPair();
+        //    pair.PropertyName = s[0];
+        //    s[1] = s[1].Trim('"');
+        //    pair.Value = s[1];
+        //    Debug.WriteLine(pair.PropertyName + "="+pair.Value);
+        //    return pair;
+        //}
     }
 }
