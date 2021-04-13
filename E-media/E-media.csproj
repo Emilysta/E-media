@@ -119,8 +119,15 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FourierTab.xaml.cs">
+      <DependentUpon>FourierTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ImageListClass.cs" />
     <Compile Include="ImageTab.xaml.cs">
       <DependentUpon>ImageTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MetaTab.xaml.cs">
+      <DependentUpon>MetaTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="NavPage.xaml.cs">
       <DependentUpon>NavPage.xaml</DependentUpon>
@@ -150,7 +157,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="FourierTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ImageTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MetaTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

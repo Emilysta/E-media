@@ -9,13 +9,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <NavigationView x:Name="NavViewControl" Loaded="NavView_Loaded" ItemInvoked="NavView_ItemInvoked" IsBackButtonVisible="Collapsed">
         <NavigationView.MenuItems>
-            <NavigationViewItem Tag="imageTab">
+            <NavigationViewItem Tag="imageTab" x:Name="imageTab">
                 Image
             </NavigationViewItem>
-            <NavigationViewItem Tag="metaTab">
+            <NavigationViewItem Tag="metaTab" x:Name="metaTab" Visibility="Collapsed">
                 Metadata
             </NavigationViewItem>
-            <NavigationViewItem Tag="fourierTab">
+            <NavigationViewItem Tag="fourierTab" x:Name="fourierTab" Visibility="Collapsed">
                 Fourier transform
             </NavigationViewItem>
         </NavigationView.MenuItems>

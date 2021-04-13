@@ -25,6 +25,8 @@ namespace E_media
     /// </summary>
     public sealed partial class ImageTab : Page
     {
+        public SvgImageSource image;
+        public int myID;
         private Stream fileStream;
         public ImageTab()
         {
@@ -52,7 +54,7 @@ namespace E_media
         private async void OpenFile(StorageFile file)
         {
             var stream = await file.OpenAsync(FileAccessMode.Read);
-            SvgImageSource image = new SvgImageSource();
+            image = new SvgImageSource();
             await image.SetSourceAsync(stream);
             fileStream = stream.AsStreamForRead();
             ImageControl.Source = image;
@@ -60,6 +62,7 @@ namespace E_media
 
         private void MetadataButton_Click(object sender, RoutedEventArgs e)
         {
+            //NavPage.navPage.GetMetaTabItem().Visibility = Visibility.Visible;
             //Wywala się na czytaniu pierwszej linijki
             /*
             Metadata = new List<XMLPair>();
@@ -80,6 +83,11 @@ namespace E_media
             Lista.ItemsSource = Metadata;
             MetadataTab.Visibility = Visibility.Visible;
             */
+        }
+
+        private void FourierButton_Click(object sender, RoutedEventArgs e)
+        {
+            //NavPage.navPage.GetFourierTabItem().Visibility = Visibility.Visible;
         }
     }
 }

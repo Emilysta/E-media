@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using muxc = Microsoft.UI.Xaml.Controls;
 
@@ -23,15 +24,19 @@ namespace E_media
     /// </summary>
     public sealed partial class NavPage : Page
     {
+        public SvgImageSource image;
+        public int myID;
         public NavPage()
         {
             this.InitializeComponent();
+            myID = ImageListClass.GetNextID();
+            ImageListClass.Add(this);
         }
         private readonly List<(string Tag, Type Page)> _pages = new List<(string Tag, Type Page)>
         {
             ("imageTab", typeof(ImageTab)),
-            ("metaTab", typeof(ImageTab)),
-            ("fourierTab", typeof(ImageTab)),
+            ("metaTab", typeof(MetaTab)),
+            ("fourierTab", typeof(FourierTab)),
         };
 
         private void NavView_ItemInvoked(NavigationView sender,
@@ -74,5 +79,21 @@ namespace E_media
             // here to load the home page.
             NavView_Navigate("imageTab", new Windows.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
         }
+
+        public NavigationViewItem GetImageTabItem() 
+        {
+            return imageTab;
+        }
+
+        public NavigationViewItem GetMetaTabItem()
+        {
+            return metaTab;
+        }
+
+        public NavigationViewItem GetFourierTabItem()
+        {
+            return fourierTab;
+        }
+
     }
 }

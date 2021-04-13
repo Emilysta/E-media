@@ -23,18 +23,14 @@ using System.Diagnostics;
 
 namespace E_media
 {
-    public class XMLPair
-    {
-        public string PropertyName { get; set; }
-        public string Value { get; set; }
-    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
         private Stream fileStream;
-        //public List<XMLPair> Metadata { get; set; }
+        
         public MainPage()
         {
             this.InitializeComponent();
@@ -52,7 +48,7 @@ namespace E_media
             newTab.Content = newFrame;
             newFrame.Navigate(typeof(NavPage));
             sender.TabItems.Add(newTab);
-
+            TabViewControl.SelectedItem = newTab;
         }
 
         private void TabViewControl_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
@@ -81,15 +77,5 @@ namespace E_media
         //    FourierTab.Visibility = Visibility.Collapsed;
         //}
 
-        //private XMLPair ReadXMLPair(string keyValuePair)
-        //{
-        //    string[] s = keyValuePair.Split('=');
-        //    XMLPair pair = new XMLPair();
-        //    pair.PropertyName = s[0];
-        //    s[1] = s[1].Trim('"');
-        //    pair.Value = s[1];
-        //    Debug.WriteLine(pair.PropertyName + "="+pair.Value);
-        //    return pair;
-        //}
     }
 }
