@@ -1,40 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
-using Windows.Storage.Pickers;
+﻿using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 using muxc = Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace E_media
 {
-
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
-        private Stream fileStream;
-        
         public MainPage()
         {
             this.InitializeComponent();
-
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
             Window.Current.SetTitleBar(TabFooterControl);
@@ -55,27 +30,5 @@ namespace E_media
         {
             sender.TabItems.Remove(args.Tab);
         }
-
-        //private void ImageTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        //{
-        //    TabViewControl.SelectedIndex = 0;
-        //    ImageTab.Visibility = Visibility.Collapsed;
-        //    MetadataTab.Visibility = Visibility.Collapsed;
-        //    FourierTab.Visibility = Visibility.Collapsed;
-        //}
-
-        //private void MetadataTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        //{
-        //    TabViewControl.SelectedIndex = 1;
-        //    MetadataTab.Visibility = Visibility.Collapsed;
-        //    Metadata = new List<XMLPair>();
-        //}
-
-        //private void FourierTab_CloseRequested(muxc.TabViewItem sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        //{
-        //    TabViewControl.SelectedIndex = 1;
-        //    FourierTab.Visibility = Visibility.Collapsed;
-        //}
-
     }
 }

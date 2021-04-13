@@ -7,15 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <NavigationView x:Name="NavViewControl" Loaded="NavView_Loaded" ItemInvoked="NavView_ItemInvoked" IsBackButtonVisible="Collapsed">
+    <NavigationView x:Name="NavViewControl" ItemInvoked="NavView_ItemInvoked" IsBackButtonVisible="Collapsed">
         <NavigationView.MenuItems>
             <NavigationViewItem Tag="imageTab" x:Name="imageTab">
                 Image
             </NavigationViewItem>
-            <NavigationViewItem Tag="metaTab" x:Name="metaTab" Visibility="Collapsed">
+            <NavigationViewItem Tag="metaTab" x:Name="metaTab">
                 Metadata
             </NavigationViewItem>
-            <NavigationViewItem Tag="fourierTab" x:Name="fourierTab" Visibility="Collapsed">
+            <NavigationViewItem Tag="fourierTab" x:Name="fourierTab">
                 Fourier transform
             </NavigationViewItem>
         </NavigationView.MenuItems>

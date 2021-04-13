@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+using Windows.Storage.Streams;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace E_media
 {
@@ -24,9 +15,7 @@ namespace E_media
         public string PropertyName { get; set; }
         public string Value { get; set; }
     }
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+
     public sealed partial class MetaTab : Page
     {
         public int myID;
@@ -34,7 +23,6 @@ namespace E_media
         public MetaTab()
         {
             this.InitializeComponent();
-            ReadMetadata();
         }
 
         private XMLPair ReadXMLPair(string keyValuePair)
@@ -42,32 +30,21 @@ namespace E_media
             string[] s = keyValuePair.Split('=');
             XMLPair pair = new XMLPair();
             pair.PropertyName = s[0];
-            s[1] = s[1].Trim('"');
+            s[1] = s[1].TrimStart('"');
+            s[1] = s[1].TrimEnd('"');
             pair.Value = s[1];
             Debug.WriteLine(pair.PropertyName + "=" + pair.Value);
             return pair;
         }
 
-        private void ReadMetadata()
+        private async void ReadMetadata()
         {
+            IRandomAccessStream stream = await ImageListClass.FileSourceList[myID].OpenAsync(FileAccessMode.Read);
             Metadata = new List<XMLPair>();
-            for (int i = 0; i < 200; i++)
-            {
-                Metadata.Add(new XMLPair
-                {
-                    PropertyName = "elo",
-                    Value = "1"
-                });
-            }
-            metaList.ItemsSource = Metadata;
-
-            //Wywala się na czytaniu pierwszej linijki
-            /*
-            Metadata = new List<XMLPair>();
-            using (StreamReader reader = new StreamReader(fileStream))
+            using (StreamReader reader = new StreamReader(stream.AsStreamForRead()))
             {
                 string line = reader.ReadLine();
-                if (line.StartsWith("<?xml"))
+                if (line.StartsWith("<svg"))
                 {
                     string[] pairs = line.Split();
                     foreach(string s in pairs)
@@ -78,9 +55,13 @@ namespace E_media
                     }
                 }
             }
-            Lista.ItemsSource = Metadata;
-            MetadataTab.Visibility = Visibility.Visible;
-            */
+            metaList.ItemsSource = Metadata; 
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            myID = (int)e.Parameter;
+            ReadMetadata();
         }
     }
 }

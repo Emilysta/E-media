@@ -9,18 +9,22 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ListBox x:Name="metaList">
+        <ListBox x:Name="metaList" HorizontalContentAlignment="Stretch">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment"
+                        Value="Stretch"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid BorderThickness="0 0 0 1" BorderBrush="LightGray">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="metadataName" Grid.Column="0" Text="{Binding Path=PropertyName}" HorizontalTextAlignment="Justify" HorizontalAlignment="Stretch"/>
-                        <TextBlock Text="BEEEEEE" TextAlignment="Right" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalTextAlignment="Right"/>
-                        <TextBlock x:Name="metadata" Grid.Column="2" Text="{Binding Path=Value}" TextAlignment="Right"/>
+                        <TextBlock x:Name="metadataName" Grid.Column="0" Text="{Binding Path=PropertyName}" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="metadata" Grid.Column="1" Text="{Binding Path=Value}" HorizontalAlignment="Right"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
