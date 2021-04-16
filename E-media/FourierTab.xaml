@@ -9,18 +9,34 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="0" Grid.Row="0">
+        <TextBlock FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Normal image:"/>
+        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="0" Grid.Row="1">
             <Grid>
-                <Image Grid.Column="0" x:Name="FourierControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                <!--<TextBlock x:Name="noImageText" Text="No image opened. Please click Open SVG button and choose image" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+                <Image Grid.Column="0" x:Name="NormalImageControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="1" Content="Show" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="ShowButton" Click="ShowButton_Click"/>
+            <TextBlock FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Text="After Fourier transform:"/>
+            
+        </Grid>
+        
+        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="1" Grid.Row="1">
+            <Grid>
+                <Image Grid.Column="0" x:Name="FourierImageControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
             </Grid>
         </Border>
 

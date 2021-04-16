@@ -1,47 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace E_media
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class FourierTab : Page
     {
         public int myID;
         public FourierTab()
         {
             this.InitializeComponent();
-            NewMethod();
+            RenderFourierTransform();
         }
 
-        private async void NewMethod()
+        private async void RenderFourierTransform()
         {
             var stream = await ImageListClass.FileSourceList[myID].OpenAsync(FileAccessMode.Read);
-            BitmapImage image = new BitmapImage();
-            image.SetSource(stream);
+            SvgImageSource image = new SvgImageSource();
+            await image.SetSourceAsync(stream);
+            NormalImageControl.Source = image;
         }
+
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             myID = (int)e.Parameter;
+        }
+
+        private async void ShowButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var bitmap = new RenderTargetBitmap();
+            await bitmap.RenderAsync(NormalImageControl);
+            var pixelBuffer = await bitmap.GetPixelsAsync();
+            byte[] pixels = pixelBuffer.ToArray();
+            var wb = BitmapFactory.New(bitmap.PixelWidth, bitmap.PixelHeight);
+            using (Stream stream = wb.PixelBuffer.AsStream())
+            {
+                await stream.WriteAsync(pixels, 0, pixels.Length);
+            }
+
+            wb = FFT.AddPadding(wb);
+            wb = FFT.MakeFFT(wb);
+            FourierImageControl.Source = wb;
         }
     }
 }
