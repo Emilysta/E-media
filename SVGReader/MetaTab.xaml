@@ -36,7 +36,8 @@
                 <RowDefinition Height="160"/>
                 <RowDefinition Height="160"/>
             </Grid.RowDefinitions>
-            <ListBox x:Name="metaList" HorizontalContentAlignment="Stretch"  Background="DarkGray" Margin="20">
+            <ListBox x:Name="metaList" HorizontalContentAlignment="Stretch"  Background="DarkGray" Margin="20" 
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.PanningMode="VerticalOnly">
                 <ListBox.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -59,9 +60,11 @@
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="80"/>
                             </Grid.RowDefinitions>
-                            <TextBlock x:Name="metadataName" Grid.Column="0" Text="{Binding Path=Name}" HorizontalAlignment="Left"/>
-                            <TextBlock x:Name="metadata" Grid.Column="1" Text="{Binding Path=Content}" HorizontalAlignment="Right"/>
-                            <ListBox Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" x:Name="attributesList" ItemsSource="{Binding Path=Attributes}" Background="LightGray">
+                            <TextBlock x:Name="metadataName" Grid.Column="0" Text="{Binding Path=Name}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="metadata" Grid.Column="1" Text="{Binding Path=Content}" HorizontalAlignment="Right" TextWrapping="Wrap"/>
+                            <ListBox Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" x:Name="attributesList" ItemsSource="{Binding Path=Attributes}" 
+                                     Background="LightGray" ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.PanningMode="VerticalOnly">
                                 <ListBox.Resources>
                                     <Style TargetType="Border">
                                         <Setter Property="CornerRadius" Value="5"/>
@@ -74,8 +77,8 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock x:Name="attributeName" Grid.Column="0" Text="{Binding Path=PropertyName}" HorizontalAlignment="Left"/>
-                                            <TextBlock x:Name="attributeContent" Grid.Column="1" Text="{Binding Path=Value}" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="attributeName" Grid.Column="0" Text="{Binding Path=PropertyName}" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                                            <TextBlock x:Name="attributeContent" Grid.Column="1" Text="{Binding Path=Value}" HorizontalAlignment="Right" TextWrapping="Wrap"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
