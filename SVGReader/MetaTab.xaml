@@ -10,13 +10,11 @@
 
     <Page.Resources>
         <Style TargetType="ListBoxItem">
-            <Setter Property="HorizontalContentAlignment"
-                        Value="Stretch"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
                         <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -36,9 +34,9 @@
                 <RowDefinition Height="160"/>
                 <RowDefinition Height="160"/>
             </Grid.RowDefinitions>
-            <ListBox x:Name="metaList" HorizontalContentAlignment="Stretch"  Background="DarkGray" Margin="20" 
+            <ListBox x:Name="metaList" Background="DarkGray" Margin="20" 
                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.PanningMode="VerticalOnly">
-                <ListBox.Resources>
+                <!--<ListBox.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
                     </Style>
@@ -48,7 +46,7 @@
                     <Style TargetType="RepeatButton">
                         <Setter Property="Background" Value="#202020"/>
                     </Style>
-                </ListBox.Resources>
+                </ListBox.Resources>-->
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
