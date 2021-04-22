@@ -22,7 +22,7 @@ namespace SVGReader
             fouriertab = new FourierTab(myID,this);
             imagetab.StartMethod();
             metatab.StartMethod();
-            fouriertab.StartMethod();
+            //fouriertab.StartMethod();
             SetContentToImagetab();
         }
         private void SetContentToMetatab()

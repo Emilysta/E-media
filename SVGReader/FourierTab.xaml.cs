@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using AForge.Imaging;
-using AForge.Math;
 
 namespace SVGReader
 {
@@ -29,21 +25,23 @@ namespace SVGReader
 
         public void StartMethod()
         {
-            RenderFourierTransform();
+            new Thread(() =>
+            {
+                Thread.Sleep(200);
+                Dispatcher.Invoke(RenderFourierTransform);
+            }).Start();
         }
 
         private void RenderFourierTransform()
         {
             XMLNode node = navPage.metatab.Nodes.Find(x => x.Name == "svg");
-            int width = Convert.ToInt32( node.Attributes.Find(x => x.PropertyName == "width").Value);
-            int height = Convert.ToInt32(node.Attributes.Find(x => x.PropertyName == "height").Value);
-            Trace.WriteLine("szerokosc: " + width);
-            Trace.WriteLine("wysokosc: " + height);
-            var renderBitmap = new RenderTargetBitmap(width, height, 96, 96,PixelFormats.Pbgra32);
+            int width = (int)navPage.imagetab.SVGImage.ActualWidth;
+            int height = (int)navPage.imagetab.SVGImage.ActualHeight;
+            var renderBitmap = new RenderTargetBitmap(width,height, 96, 96,PixelFormats.Pbgra32);
 
             var visualBrush = new VisualBrush
             {
-                Visual = NormalImageControl,
+                Visual = navPage.imagetab.SVGImage,
                 Stretch = Stretch.Uniform
             };
             System.Windows.Size size = new System.Windows.Size(width,height);
@@ -61,28 +59,12 @@ namespace SVGReader
             encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
             encoder.Save(stream);
             Bitmap bitmap = new Bitmap(stream);
-            //Bitmap bitmapWithPadd = ImageProcessing.AddPadding(bitmap);
-            //(ImageSource)converter.ConvertFrom(greyscale);
-            Bitmap fourier = ImageProcessing.MakeFFT(bitmap);
-            FourierImageControl.Source = ToBitmapImage(fourier);
-        }
 
-        public BitmapImage ToBitmapImage(Bitmap bitmap)
-        {
-            using (var memory = new MemoryStream())
-            {
-                bitmap.Save(memory, ImageFormat.Png);
-                memory.Position = 0;
+            bitmap = ImageProcessing.AddPadding(bitmap);
 
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
-
-                return bitmapImage;
-            }
+            PaddingImageControl.Source = ImageProcessing.ToBitmapImage(bitmap);
+            MagnitudeImageControl.Source =ImageProcessing.MakeFFTMagnitude(bitmap);
+            PhaseImageControl.Source =ImageProcessing.MakeFFTPhase(bitmap);
         }
     }
 }

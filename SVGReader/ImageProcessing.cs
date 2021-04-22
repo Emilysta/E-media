@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using AForge.Imaging.Filters;
-using System.Numerics;
+using AForge.Imaging;
+using System.Windows.Media.Imaging;
+using System.IO;
 using System.Linq;
+using System.Drawing.Drawing2D;
 
 namespace SVGReader
 {
-    class ImageProcessing
+    public static class ImageProcessing
     {
         public static Bitmap AddPadding(Bitmap image)
         {
@@ -23,181 +25,105 @@ namespace SVGReader
                     break;
                 n++;
             }
+            if ((width == height) && width == size)
+                return image;
             Bitmap bmp = new Bitmap(size, size);
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    bmp.SetPixel(i, j, image.GetPixel(i, j));
-                }
-            }
-            for (int i = width; i < size; i++)
-            {
-                for (int j = height; j < size; j++)
-                {
-                    bmp.SetPixel(i, j, Color.Black);
-                }
-            }
+            //for (int i = 0; i < size; i++)
+            //{
+            //    for (int j = 0; j < size; j++)
+            //    {
+            //        if (i < width && j < height)
+            //            bmp.SetPixel(i, j, image.GetPixel(i, j));
+            //        else
+            //            bmp.SetPixel(i, j, Color.Black);
+            //    }
+            //}
+
+            float scale = Math.Min(size / image.Width, size / image.Height);
+            var graph = Graphics.FromImage(bmp);
+            var brush = new SolidBrush(Color.Black);
+
+            // uncomment for higher quality output
+            graph.InterpolationMode = InterpolationMode.High;
+            graph.CompositingQuality = CompositingQuality.HighQuality;
+            graph.SmoothingMode = SmoothingMode.AntiAlias;
+
+            var scaleWidth = (int)(image.Width * scale);
+            var scaleHeight = (int)(image.Height * scale);
+
+            graph.FillRectangle(brush, new RectangleF(0, 0, size,size));
+            graph.DrawImage(image, ((int)size - scaleWidth) / 2, ((int)size - scaleHeight) / 2, scaleWidth, scaleHeight);
+            bmp.Save("Test2.jpg");
             return bmp;
         }
 
-        public static Bitmap MakeFFT(Bitmap image)
+        public static BitmapImage MakeFFTPhase(Bitmap image)
         {
-            Grayscale filter = new Grayscale(0.33, 0.33, 0.33);
+            Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
             Bitmap grayImage = filter.Apply(image);
-            Complex[][] complexImage = Forward(grayImage);
-            return ToBitmap(complexImage);
+            ComplexImage compleximage = ComplexImage.FromBitmap(grayImage);
+            compleximage.ForwardFourierTransform();
+            Bitmap fi = ToBitmapPhase(compleximage, image.Width);
+            return ToBitmapImage(fi);
         }
-        public static Complex[][] ToComplex(Bitmap image)
+
+        public static BitmapImage MakeFFTMagnitude(Bitmap image)
         {
-            int width = image.Width;
-            int height = image.Height;
-
-            BitmapData bitmapData = image.LockBits(
-                           new Rectangle(0, 0, width, height),
-                           ImageLockMode.ReadOnly,
-                           PixelFormat.Format8bppIndexed);
-
-            byte[] buffer = new byte[width * height];
-            Complex[][] result = new Complex[width][];
-
-            Marshal.Copy(bitmapData.Scan0, buffer, 0, buffer.Length);
-            image.UnlockBits(bitmapData);
-
-            int pixel_position;
-
-            for (int i = 0; i < width; i++)
-            {
-                result[i] = new Complex[height];
-                for (int j = 0; j < height; j++)
-                {
-                    pixel_position = i * width + j;
-                    result[i][j] = new Complex(buffer[pixel_position], 0);
-                }
-            }
-            return result;
+            Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
+            Bitmap grayImage = filter.Apply(image);
+            ComplexImage compleximage = ComplexImage.FromBitmap(grayImage);
+            compleximage.ForwardFourierTransform();
+            Bitmap fi = compleximage.ToBitmap();
+            return ToBitmapImage(fi);
         }
-        public static Bitmap ToBitmap(Complex[][] complexImage)
+
+        public static BitmapImage ToBitmapImage(Bitmap bitmap)
         {
-            float[] frequencies = new float[complexImage.Length * complexImage.Length];
-            for (int i = 0; i < complexImage.Length; i++)
+            var bitmapImage = new BitmapImage();
+            using (var memory = new MemoryStream())
             {
-                for (int j = 0; j < complexImage[0].Length; j++)
-                {
-                    frequencies[i * complexImage.Length + j] = (float)complexImage[i][j].Magnitude;
-                }
-            }
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
 
-            float min = frequencies.Min();
-            float max = frequencies.Max();
-            double log_constant = 255 / Math.Log10(1 + 255);
-            for (int i = 0; i < frequencies.Length; i++)
-            {
-                frequencies[i] = 255 * (frequencies[i] - min) / (max - min);
-                frequencies[i] = (int)(Math.Log10(1 + frequencies[i]) * log_constant);
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
             }
+            return bitmapImage;
+        }
 
-            Bitmap image = new Bitmap(complexImage.Length, complexImage.Length);
-            BitmapData image_data = image.LockBits(
-                new Rectangle(0, 0, complexImage.Length, complexImage.Length),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppArgb);
-            int bytes = image_data.Stride * image_data.Height;
-            byte[] result = new byte[bytes];
-            for (int y = 0; y < complexImage.Length; y++)
+        public static Bitmap ToBitmapPhase(ComplexImage complexImage, int width)
+        {
+            // create new image
+            Bitmap dstImage = AForge.Imaging.Image.CreateGrayscaleImage(width, width);
+
+            // lock destination bitmap data
+            BitmapData dstData = dstImage.LockBits(
+                new Rectangle(0, 0, width, width),
+                ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+
+            int offset = dstData.Stride - width;
+            double scale = Math.Sqrt(width * width);
+            // do the job
+            unsafe
             {
-                for (int x = 0; x < complexImage.Length; x++)
+                byte* dst = (byte*)dstData.Scan0.ToPointer();
+
+                for (int y = 0; y < width; y++)
                 {
-                    int pixel_position = y * image_data.Stride + x * 4;
-                    for (int i = 0; i < 3; i++)
+                    for (int x = 0; x < width; x++, dst++)
                     {
-                        result[pixel_position + i] = (byte)frequencies[y * complexImage.Length + x];
+
+                        *dst = (byte)Math.Max(0, Math.Min(255, complexImage.Data[y, x].Phase * scale * 255));
                     }
-                    result[pixel_position + 3] = 255;
+                    dst += offset;
                 }
             }
-            Marshal.Copy(result, 0, image_data.Scan0, bytes);
-            image.UnlockBits(image_data);
-            return image;
-        }
+            // unlock destination images
+            dstImage.UnlockBits(dstData);
 
-        public static Complex[][] Forward(Bitmap image)
-        {
-            int size = image.Width;
-            var p = new Complex[size][];
-            var f = new Complex[size][];
-            var t = new Complex[size][];
-
-            var complexImage = ToComplex(image);
-
-            for (int l = 0; l < size; l++)
-            {
-                p[l] = Forward(complexImage[l]);
-            }
-
-            for (int l = 0; l < size; l++)
-            {
-                t[l] = new Complex[size];
-                for (int k = 0; k < size; k++)
-                {
-                    t[l][k] = p[k][l];
-                }
-                f[l] = Forward(t[l]);
-            }
-
-            return f;
-        }
-        public static Complex[] Forward(Complex[] input, bool phaseShift = true)
-        {
-            int size = input.Length;
-            var result = new Complex[input.Length];
-            var omega = (float)(-2.0 * Math.PI / input.Length);
-
-            if (input.Length == 1)
-            {
-                result[0] = input[0];
-
-                if (Complex.IsNaN(result[0]))
-                {
-                    return new[] { new Complex(0, 0) };
-                }
-                return result;
-            }
-
-            var evenInput = new Complex[input.Length / 2];
-            var oddInput = new Complex[input.Length / 2];
-
-            for (int i = 0; i < input.Length / 2; i++)
-            {
-                evenInput[i] = input[2 * i];
-                oddInput[i] = input[2 * i + 1];
-            }
-
-            var even = Forward(evenInput, phaseShift);
-            var odd = Forward(oddInput, phaseShift);
-
-            for (int k = 0; k < input.Length / 2; k++)
-            {
-                int phase;
-
-                if (phaseShift)
-                {
-                    phase = k - size / 2;
-                }
-                else
-                {
-                    phase = k;
-                }
-                odd[k] *= Complex.FromPolarCoordinates(1, omega * phase);
-            }
-
-            for (int k = 0; k < input.Length / 2; k++)
-            {
-                result[k] = even[k] + odd[k];
-                result[k + input.Length / 2] = even[k] - odd[k];
-            }
-
-            return result;
+            return dstImage;
         }
     }
 }

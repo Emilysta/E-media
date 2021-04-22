@@ -6,10 +6,12 @@
       xmlns:local="clr-namespace:SVGReader"
        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="800" d:DesignWidth="800"
       Title="FourierTab">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
@@ -19,32 +21,24 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Normal image:"/>
-        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="0" Grid.Row="1">
-            <Grid>
-                <svgc:SvgControl x:Name="NormalImageControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoSize="True"/>
-            </Grid>
+        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="0" Grid.Row="1" >
+            <svgc:SvgViewbox x:Name="NormalImageControl" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
 
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="After Fourier transform:"/>
-
-        </Grid>
-
+        <TextBlock Grid.Column="1" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="With padding:"/>
         <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="1" Grid.Row="1">
-            <Image x:Name="FourierImageControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <Image x:Name="PaddingImageControl" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Border>
 
-        <Grid Grid.Column="1" Grid.RowSpan="4">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-        </Grid>
+        <TextBlock  Grid.Row="2" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Magnitude:"/>
+        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="0" Grid.Row="3">
+            <Image x:Name="MagnitudeImageControl"/>
+        </Border>
+
+        <TextBlock  Grid.Row="2" Grid.Column="1" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Phase:"/>
+        <Border BorderBrush="DarkGray" BorderThickness="4" Margin="20" Grid.Column="1" Grid.Row="3">
+            <Image x:Name="PhaseImageControl"/>
+        </Border>
+
     </Grid>
 </Page>
