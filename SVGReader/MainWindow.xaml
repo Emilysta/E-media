@@ -36,6 +36,7 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="5*"/>
                     <ColumnDefinition Width="*"/>
@@ -44,8 +45,12 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                <Button Click="AddTabButton_Click" Content="+"/>
+                <Button Grid.Column="7" Click="CloseWindowButton_Click" Content="X"/>
+                <Button Grid.Column="6" Click="MinimizeButton_Click" Content="—"/>
+                <Rectangle Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="Transparent" Grid.ColumnSpan="5" MouseDown="Rectangle_MouseDown"/>
             </Grid>
-            <Button Grid.Row="0"  Click="AddTabButton_Click" HorizontalAlignment="Right" Content="+"/>
+            
             <Border  Grid.Row="1" CornerRadius="5">
             <TabControl x:Name="TabsControl" BorderThickness="0" Background="#404040">
                 <TabControl.Resources>
@@ -89,7 +94,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="18"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="HeaderText" Grid.Column="0" Text="{Binding fileName}" Margin="0 0 5 0"/>
+                                <TextBlock x:Name="HeaderText" Grid.Column="0" Text="{Binding fileName}" Foreground="LightGray" Margin="0 0 5 0"/>
                             <Button BorderThickness="0" Grid.Column="1" Click="CloseButton_Click" Tag="{Binding tabID}" >
                                 <Image Source="Assets/close.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="3" />
                                     <Button.Style>

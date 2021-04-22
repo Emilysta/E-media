@@ -13,6 +13,7 @@ namespace SVGReader
         public ImageTab imagetab;
         public MetaTab metatab;
         public FourierTab fouriertab;
+        public ImageAfterRemove removedtab;
         public NavPage()
         {
             InitializeComponent();
@@ -20,9 +21,11 @@ namespace SVGReader
             imagetab = new ImageTab(myID,this);
             metatab = new MetaTab(myID,this);
             fouriertab = new FourierTab(myID,this);
+            removedtab = new ImageAfterRemove(myID, this);
             imagetab.StartMethod();
             metatab.StartMethod();
             //fouriertab.StartMethod();
+            //removedtab.StartMethod();
             SetContentToImagetab();
         }
         private void SetContentToMetatab()
@@ -41,6 +44,12 @@ namespace SVGReader
             fouriertab.StartMethod();
         }
 
+        private void SetContentToRemovedtab()
+        {
+            NavContentFrame.Navigate(removedtab);
+            removedtab.StartMethod();
+        }
+
         private void MetadataButton_Click(object sender, RoutedEventArgs e)
         {
             SetContentToMetatab();
@@ -54,6 +63,11 @@ namespace SVGReader
         private void FourierButton_Click(object sender, RoutedEventArgs e)
         {
             SetContentToFouriertab();
+        }
+
+        private void RemovedButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetContentToRemovedtab();
         }
     }
 }

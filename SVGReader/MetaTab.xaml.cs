@@ -198,42 +198,49 @@ namespace SVGReader
             if (haveMetadata)
             {
                 XMLNode metadataNode = Nodes.Find(x => x.Name == "metadata");
-                XMLNode ccWorkNode = metadataNode.Children[0].Children[0];
-                List<XMLNode> listOfNodesWithoutCCAgent = ccWorkNode.Children.FindAll(x => x.Children.Count == 0);
-                List<XMLNode> listOfNodesWithCCAgent = ccWorkNode.Children.FindAll(x => x.Children.Count != 0);
-                XMLNode metaNodeToDisplay = new XMLNode();
-                metaNodeToDisplay.Name = "metadata";
-                metaNodeToDisplay.Attributes = new List<XMLPair>();
-                if(metadataNode.Attributes.Count!=0)
+                XMLNode ccWorkNode;
+                if (metadataNode.Children.Count != 0)
                 {
-                    foreach(XMLPair attr in metadataNode.Attributes)
+                    if (metadataNode.Children[0].Children.Count != 0)
                     {
-                        metaNodeToDisplay.Attributes.Add(attr);
-                    }
-                }
-                metaNodeToDisplay.Children = new List<XMLNode>();
-
-                foreach (XMLNode node in listOfNodesWithoutCCAgent)
-                {
-                    metaNodeToDisplay.Attributes.Add(new XMLPair()
-                    {
-                        PropertyName = node.Name,
-                        Value = node.Content
-                    });
-                }
-                foreach (XMLNode node in listOfNodesWithCCAgent)
-                {
-                    XMLNode dctitle = node.Children[0].Children[0];
-                    if (dctitle.Name == "dc:title")
-                    {
-                        metaNodeToDisplay.Attributes.Add(new XMLPair()
+                        ccWorkNode = metadataNode.Children[0].Children[0];
+                        List<XMLNode> listOfNodesWithoutCCAgent = ccWorkNode.Children.FindAll(x => x.Children.Count == 0);
+                        List<XMLNode> listOfNodesWithCCAgent = ccWorkNode.Children.FindAll(x => x.Children.Count != 0);
+                        XMLNode metaNodeToDisplay = new XMLNode();
+                        metaNodeToDisplay.Name = "metadata";
+                        metaNodeToDisplay.Attributes = new List<XMLPair>();
+                        if (metadataNode.Attributes.Count != 0)
                         {
-                            PropertyName = node.Name,
-                            Value = dctitle.Content
-                        });
+                            foreach (XMLPair attr in metadataNode.Attributes)
+                            {
+                                metaNodeToDisplay.Attributes.Add(attr);
+                            }
+                        }
+                        metaNodeToDisplay.Children = new List<XMLNode>();
+
+                        foreach (XMLNode node in listOfNodesWithoutCCAgent)
+                        {
+                            metaNodeToDisplay.Attributes.Add(new XMLPair()
+                            {
+                                PropertyName = node.Name,
+                                Value = node.Content
+                            });
+                        }
+                        foreach (XMLNode node in listOfNodesWithCCAgent)
+                        {
+                            XMLNode dctitle = node.Children[0].Children[0];
+                            if (dctitle.Name == "dc:title")
+                            {
+                                metaNodeToDisplay.Attributes.Add(new XMLPair()
+                                {
+                                    PropertyName = node.Name,
+                                    Value = dctitle.Content
+                                });
+                            }
+                        }
+                        Metadata.Add(metaNodeToDisplay);
                     }
                 }
-                Metadata.Add(metaNodeToDisplay);
             }
             metaList.ItemsSource = Metadata;
             DataContext = this;

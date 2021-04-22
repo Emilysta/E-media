@@ -77,5 +77,21 @@ namespace SVGReader
         {
             AddNewTab();
         }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void CloseWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Rectangle_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            this.DragMove();
+        }
     }
 }
