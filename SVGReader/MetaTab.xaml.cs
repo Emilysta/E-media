@@ -36,7 +36,7 @@ namespace SVGReader
     /// </summary>
     public partial class MetaTab : Page
     {
-        List<string> metadataToRead = new List<string> { "?xml", "!DOCTYPE", "svg", "title", "desc" };
+        List<string> metadataToRead = new List<string> { "?xml", "!DOCTYPE", "svg", "title", "desc", "text" };
         public int myID;
         public List<XMLNode> Metadata { get; set; }
         public List<XMLNode> Nodes { get; set; }

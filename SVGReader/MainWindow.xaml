@@ -52,7 +52,7 @@
             </Grid>
             
             <Border  Grid.Row="1" CornerRadius="5">
-            <TabControl x:Name="TabsControl" BorderThickness="0" Background="#404040">
+            <TabControl x:Name="TabsControl" ItemsSource="{Binding tabItems, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" Background="#404040">
                 <TabControl.Resources>
                         <Style TargetType="{x:Type TabPanel}">
                             <Setter Property="Background" Value="#101010"></Setter>
@@ -104,6 +104,18 @@
                                                 <Trigger Property="IsMouseOver" Value="True">
                                                     <Setter Property="Background" Value="#606060"/>
                                                 </Trigger>
+                                                <!--<DataTrigger Binding="{Binding IsOneTab}" Value="True">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsOneTab}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="True"/>
+                                                </DataTrigger>-->
+                                                <DataTrigger Binding="{Binding IsOneTab}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsOneTab}" Value="False">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Button.Style>

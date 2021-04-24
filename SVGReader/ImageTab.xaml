@@ -10,7 +10,7 @@
       Title="ImageTab" Background="Transparent">
     <Grid>
         <Border CornerRadius="5" BorderThickness="0" Margin="20" Grid.Column="0" Grid.Row="0" Background="DarkGray">
-            <svgc:SvgViewbox x:Name="SVGImage"/>
+            <svgc:SvgViewbox x:Name="SVGImage" AutoSize="True"/>
         </Border>
     </Grid>
 </Page>

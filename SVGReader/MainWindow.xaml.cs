@@ -7,29 +7,48 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Win32;
 using System;
+using System.ComponentModel;
 
 namespace SVGReader
 {
-    public class tabItemClass
+    public class tabItemClass 
     {
         public string fileName { get; set; }
         public string tabID { get; set; }
         public NavPage navPage { get; set; }
+        public bool IsOneTab { get; set; }
+    
     }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public ObservableCollection<tabItemClass> tabItems { get; set; }
+        private ObservableCollection<tabItemClass> _tabItems;
+        public ObservableCollection<tabItemClass> tabItems 
+        {
+            get { return _tabItems; }
+            set { _tabItems = value; NotifyPropertyChanged("tabItems"); }
+        }
         public MainWindow()
         {
             InitializeComponent();
             tabItems = new ObservableCollection<tabItemClass>();
             AddNewTab();
             DataContext = this;
-            TabsControl.ItemsSource = tabItems;
+            NotifyPropertyChanged("tabItems");
+            //TabsControl.ItemsSource = tabItems;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
         }
 
         private void AddNewTab()
@@ -43,18 +62,27 @@ namespace SVGReader
                 {
                     fileName = Path.GetFileName(openFile.FileName),
                     tabID = Guid.NewGuid().ToString(),
-                    navPage = new NavPage()
+                    navPage = new NavPage(),
+                    IsOneTab = true
                 }) ;
-                TabsControl.ItemsSource = tabItems;
+                if (tabItems.Count >= 2)
+                {
+                    foreach(tabItemClass tab in tabItems)
+                    {
+                        tab.IsOneTab = false;
+                    }
+                }
+                NotifyPropertyChanged("tabItems");
+                //TabsControl.ItemsSource = tabItems;
                 TabsControl.SelectedIndex = tabItems.Count - 1;
             }
         }
+
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
             {
-                //TabsControl.Items.Remove(item);
                 int selectedTabIndex = TabsControl.SelectedIndex;
                 int index = tabItems.IndexOf(tabItems.Where(x => x.tabID == button.Tag.ToString()).FirstOrDefault());
                 if (selectedTabIndex == index)
@@ -63,13 +91,23 @@ namespace SVGReader
                     {
                         tabItems.RemoveAt(index);
                         TabsControl.SelectedIndex = (tabItems.Count - 1);
+                        if (tabItems.Count == 1)
+                        {
+                            tabItems[0].IsOneTab = true;
+                        }
                     }
                     else
                     {
                         tabItems.RemoveAt(index);
                         TabsControl.SelectedIndex = selectedTabIndex;
+                        if (tabItems.Count == 1)
+                        {
+                            tabItems[0].IsOneTab = true;
+                        }
                     }
                 }
+                else { tabItems.RemoveAt(index); }
+                NotifyPropertyChanged("tabItems");
             }
         }
 
