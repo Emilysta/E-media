@@ -2,18 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SVGReader
 {
@@ -36,7 +26,7 @@ namespace SVGReader
     /// </summary>
     public partial class MetaTab : Page
     {
-        List<string> metadataToRead = new List<string> { "?xml", "!DOCTYPE", "svg", "title", "desc", "text" };
+        List<string> metadataToRead = new List<string> { "?xml", "!DOCTYPE", "svg", "title", "desc" };
         public int myID;
         public List<XMLNode> Metadata { get; set; }
         public List<XMLNode> Nodes { get; set; }
@@ -77,7 +67,7 @@ namespace SVGReader
             {
                 content = reader.ReadToEnd();
             }
-            content = content.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+            content = content.Replace("\n", "").Replace("\r", "").Replace("\t", "").TrimStart();
             string pattern = "(?<=[>])";
             string[] lines = Regex.Split(content, pattern);
 
@@ -109,8 +99,9 @@ namespace SVGReader
                 }
                 else
                 {
-                    string tmp = lines[i].Split("</")[0];
-                    Nodes.Last().Content = tmp;
+                    string tmp = lines[i].Split("<")[0];
+                    if (currentNode != null)
+                        Nodes.Last().Content = tmp;
                     if (lines[i].Contains("</"))
                     {
                         currentNode = currentParent;
@@ -118,6 +109,17 @@ namespace SVGReader
                             currentParent = currentParent.Parent;
                         else
                             currentParent = null;
+                    }
+                    else if (lines[i].Contains("<"))
+                    {
+                        string tempLine = "<" + lines[i].Split('<')[1];
+                        XMLNode node = ReadNode(tempLine);
+                        Nodes.Add(node);
+                        currentParent = currentNode;
+                        currentNode = Nodes.Last();
+                        if (currentParent != null)
+                            currentParent.Children.Add(currentNode);
+                        currentNode.Parent = currentParent;
                     }
                 }
 
@@ -183,7 +185,6 @@ namespace SVGReader
             CountOfPolygonsText.Text = polygonCount.ToString();
             CountOfGradientsText.Text = gradientsCount.ToString();
         }
-
         private void ReadMetadata()
         {
             foreach (string metadata in metadataToRead)
@@ -194,6 +195,21 @@ namespace SVGReader
                     Metadata.Add(Nodes.Find(x => x.Name == metadata));
                 }
             }
+
+            if (Nodes.Any(x => x.Name == "text"))
+            {
+                List<XMLNode> textNodes = Nodes.FindAll(x => x.Name == "text");
+                if (textNodes != null)
+                {
+                    foreach (XMLNode node in textNodes)
+                    {
+                        Metadata.Add(node);
+                        AddTextContent(node, true);
+
+                    }
+                }
+            }
+
             bool haveMetadata = Nodes.Any(x => x.Name == "metadata");
             if (haveMetadata)
             {
@@ -244,6 +260,19 @@ namespace SVGReader
             }
             metaList.ItemsSource = Metadata;
             DataContext = this;
+        }
+        private void AddTextContent(XMLNode node, bool isParentNode)
+        {
+            string content = node.Content;
+            if (content != null)
+                content = content.Trim();
+            if (node.Children.Count > 0)
+            {
+                foreach (XMLNode childNode in node.Children)
+                    AddTextContent(childNode, false);
+            }
+            if (!isParentNode)
+                Metadata.Last().Content = content + " " + Metadata.Last().Content;
         }
     }
 }

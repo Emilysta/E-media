@@ -69,10 +69,13 @@ namespace SVGReader
             }
             XMLNode defsNode = nodes.Find(x => x.Name == "defs");
             XMLNode svgNode = nodes.Find(x => x.Name == "svg");
-            if (defsNode.Children.Count == 0)
+            if (defsNode != null)
             {
-                svgNode.Children.Remove(defsNode);
-                nodes.Remove(defsNode);
+                if (defsNode.Children.Count == 0)
+                {
+                    svgNode.Children.Remove(defsNode);
+                    nodes.Remove(defsNode);
+                }
             }
 
             XMLNode sodipodi = nodes.Find(x => x.Name == "sodipodi:namedview");
@@ -173,7 +176,7 @@ namespace SVGReader
                     }
                 }
             }
-            foreach(StringCounter counter in stringCounters)
+            foreach (StringCounter counter in stringCounters)
             {
                 if (counter.s_count == 0)
                 {
