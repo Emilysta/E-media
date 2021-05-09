@@ -8,6 +8,7 @@ using System.Windows.Data;
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using SVGReader.RSA;
 
 namespace SVGReader
 {
@@ -38,6 +39,7 @@ namespace SVGReader
             AddNewTab();
             DataContext = this;
             NotifyPropertyChanged("tabItems");
+            RSAKeyGenerator.GenerateKeyPair(512);
             //TabsControl.ItemsSource = tabItems;
         }
 
