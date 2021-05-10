@@ -10,22 +10,23 @@ using BigPrimeNumber.Primality.Heuristic;
 
 namespace SVGReader.RSA
 {
-    public class RSAKeyPair
+    public class RSAKey
     {
-        public string privateKey;
-        public string publicKey;
+        public BigInteger n;
+        public BigInteger e;
+        public BigInteger d;
     }
     class RSAKeyGenerator
     {
-        private static List<uint> m_validKeyLengths = new List<uint>() { 512, 1024, 2048, 4096 };
-        public static async void GenerateKeyPair(uint keyLength)
+        private static List<uint> m_validKeyLengths = new List<uint>() { 256, 512, 1024, 2048, 4096 };
+        public static RSAKey GenerateKeyPair(uint keyLength)
         {
             if (!m_validKeyLengths.Any(x => x == keyLength))
-                throw new Exception("Key length is not supported.\nSupported Lengths: 512,1024,2048,4096");
+                throw new Exception("Key length is not supported.\nSupported Lengths:256,512,1024,2048,4096");
 
-            uint offset = keyLength / 64;
-            uint length1 =  (keyLength/8) / 2 + offset;
-            uint length2 = (keyLength/8) / 2 - offset;
+            uint offset = 1;
+            uint length1 = (keyLength / 8) / 2 + offset;
+            uint length2 = (keyLength / 8) / 2 - offset;
 
             BigInteger p = new BigInteger();
             BigInteger q = new BigInteger();
@@ -41,9 +42,8 @@ namespace SVGReader.RSA
                         p = -p;
                     isPrime = await p.IsPrime(new RobinMillerTest(50));
                 }
-                Trace.WriteLine(p);
             });
-
+            thread1.Start();
             Thread thread2 = new Thread(async () =>
             {
                 var isPrime = false;
@@ -54,22 +54,27 @@ namespace SVGReader.RSA
                         q = -q;
                     isPrime = await q.IsPrime(new RobinMillerTest(50));
                 }
-                Trace.WriteLine(q);
             });
-
-            thread1.Start();
             thread2.Start();
-
             thread1.Join();
             thread2.Join();
-            p = new BigInteger(1123);
-            q = new BigInteger(1237);
 
             BigInteger n = p * q;
             BigInteger h = LeastCommonMultiple(p - 1, q - 1);
-            BigInteger e = GenerateEValue(n,p,q);
-            BigInteger d = BigInteger.ModPow(1/e, 1, h);
-            Trace.WriteLine(d);
+            BigInteger e = GenerateEValue(n, p, q);
+            BigInteger d = ModularInverse(e, (p - 1) * (q - 1));
+
+            Trace.WriteLine("p=" + p);
+            Trace.WriteLine("q=" + q);
+            Trace.WriteLine("n=" + n);
+            Trace.WriteLine("e=" + e);
+            Trace.WriteLine("d=" + d);
+            return new RSAKey
+            {
+                e = e,
+                d = d,
+                n = n
+            };
 
         }
 
@@ -106,10 +111,8 @@ namespace SVGReader.RSA
             return (value1 * value2) / GreatestCommonDivisor(value1, value2);
         }
 
-        private static BigInteger GreatestCommonDivisor(BigInteger value11, BigInteger value22)
+        private static BigInteger GreatestCommonDivisor(BigInteger value1, BigInteger value2)
         {
-            var value1 = value11;
-            var value2 = value22;
             while (value1 != value2)
             {
                 if (value1 > value2)
@@ -118,6 +121,38 @@ namespace SVGReader.RSA
                     value2 -= value1;
             }
             return value1;
+        }
+
+        private static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
+        {
+            BigInteger inv, u1, u3, v1, v3, t1, t3, q, iter;
+            /* Step X1. Initialise */
+            u1 = 1;
+            u3 = value;
+            v1 = 0;
+            v3 = modulus;
+            /* Remember odd/even iterations */
+            iter = 1;
+            /* Step X2. Loop while v3 != 0 */
+            while (v3 != 0)
+            {
+                /* Step X3. Divide and "Subtract" */
+                q = u3 / v3;
+                t3 = u3 % v3;
+                t1 = u1 + q * v1;
+                /* Swap */
+                u1 = v1; v1 = t1; u3 = v3; v3 = t3;
+                iter = -iter;
+            }
+            /* Make sure u3 = gcd(u,v) == 1 */
+            if (u3 != 1)
+                return 0;   /* Error: No inverse exists */
+            /* Ensure a positive result */
+            if (iter < 0)
+                inv = modulus - u1;
+            else
+                inv = u1;
+            return inv;
         }
     }
 }
