@@ -40,7 +40,7 @@ namespace SVGReader.RSA
                     p = new BigInteger(GenerateRandomBigInteger(length1));
                     if (p.Sign == -1)
                         p = -p;
-                    isPrime = await p.IsPrime(new RobinMillerTest(50));
+                    isPrime = await p.IsPrime(new RobinMillerTest(200));
                 }
             });
             thread1.Start();
@@ -61,7 +61,7 @@ namespace SVGReader.RSA
 
             BigInteger n = p * q;
             BigInteger h = LeastCommonMultiple(p - 1, q - 1);
-            BigInteger e = GenerateEValue(n, p, q);
+            BigInteger e = 65537;// GenerateEValue(n, p, q);
             BigInteger d = ModularInverse(e, (p - 1) * (q - 1));
 
             Trace.WriteLine("p=" + p);

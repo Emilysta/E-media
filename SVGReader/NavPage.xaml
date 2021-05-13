@@ -42,6 +42,7 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <TextBlock Text="Naviagtion Panel" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Foreground="LightGray" FontWeight="Bold"/>
@@ -66,6 +67,11 @@
                 <Grid Grid.Row="4">
                     <Button x:Name="RemovedButton" BorderThickness="0" Click="RemovedButton_Click" Foreground="LightGray">
                         <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">After removing metadata</TextBlock>
+                    </Button>
+                </Grid>
+                <Grid Grid.Row="5">
+                    <Button x:Name="CypherButton" BorderThickness="0" Click="CypherButton_Click"  Foreground="LightGray">
+                        <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap">RSA encryption</TextBlock>
                     </Button>
                 </Grid>
             </Grid>

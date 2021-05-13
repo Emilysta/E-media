@@ -1,12 +1,10 @@
-﻿using System.Windows;
+﻿using Microsoft.Win32;
+using System.Windows;
 using System.Windows.Controls;
 
 
 namespace SVGReader
 {
-    /// <summary>
-    /// Logika interakcji dla klasy NavPage.xaml
-    /// </summary>
     public partial class NavPage : Page
     {
         private int myID;
@@ -68,6 +66,17 @@ namespace SVGReader
         private void RemovedButton_Click(object sender, RoutedEventArgs e)
         {
             SetContentToRemovedtab();
+        }
+
+        private void CypherButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter += "Scalable Vector Graphics | *.svg";
+            if (dialog.ShowDialog() ?? false)
+            {
+                var key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
+                RSA.RSA.EncryptData(dialog.FileName, key);
+            }
         }
     }
 }

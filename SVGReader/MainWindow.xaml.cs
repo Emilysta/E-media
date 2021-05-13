@@ -39,7 +39,6 @@ namespace SVGReader
             AddNewTab();
             DataContext = this;
             NotifyPropertyChanged("tabItems");
-            RSAKeyGenerator.GenerateKeyPair(1024);
             //TabsControl.ItemsSource = tabItems;
         }
 
