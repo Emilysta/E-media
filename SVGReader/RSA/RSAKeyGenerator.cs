@@ -59,16 +59,16 @@ namespace SVGReader.RSA
             thread1.Join();
             thread2.Join();
 
-            BigInteger n = p * q;
+            BigInteger n = BigInteger.Multiply(p,q);
             BigInteger h = LeastCommonMultiple(p - 1, q - 1);
             BigInteger e = 65537;// GenerateEValue(n, p, q);
             BigInteger d = ModularInverse(e, (p - 1) * (q - 1));
 
-            Trace.WriteLine("p=" + p);
-            Trace.WriteLine("q=" + q);
-            Trace.WriteLine("n=" + n);
-            Trace.WriteLine("e=" + e);
-            Trace.WriteLine("d=" + d);
+            Trace.WriteLine("p=" + p.ToString());
+            Trace.WriteLine("q=" + q.ToString());
+            Trace.WriteLine("n=" + n.ToString());
+            Trace.WriteLine("e=" + e.ToString());
+            Trace.WriteLine("d=" + d.ToString());
             return new RSAKey
             {
                 e = e,
@@ -123,7 +123,7 @@ namespace SVGReader.RSA
             return value1;
         }
 
-        private static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
+        public static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
         {
             BigInteger inv, u1, u3, v1, v3, t1, t3, q, iter;
             /* Step X1. Initialise */

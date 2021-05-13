@@ -1,6 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SVGReader.RSA
@@ -9,7 +12,7 @@ namespace SVGReader.RSA
     {
         public static void EncryptData(string fileName, RSAKey key)
         {
-            int byteCount = 16;
+            int byteCount = 4;
             FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             string[] temp = fileName.Split('.');
             string saveFileName = temp[0] + "_encrypted.svg";
@@ -18,39 +21,59 @@ namespace SVGReader.RSA
             key.e = 11;
             key.n = 701111;
             key.d = 254339;
-            BigInteger test = BigInteger.ModPow(4,key.e,key.n);
-            Trace.WriteLine("m=" + 4);
-            Trace.WriteLine("c="+test);
+            byte[] bytesTest = new byte[2];
+            bytesTest[0] = 60;
+            bytesTest[1] = 63;
+            BigInteger temp2 = new BigInteger(bytesTest);
+            BigInteger c = BigInteger.ModPow(temp2, key.e, key.n);
+            
+            Trace.WriteLine("m=" + Encoding.UTF8.GetString(bytesTest));
+            Trace.WriteLine("c="+ c);
+            BigInteger r = BigInteger.ModPow(c, key.d, key.n);
+            Trace.WriteLine("m=" + Encoding.UTF8.GetString(r.ToByteArray()));
+            StreamWriter writer = new StreamWriter(writeStream, new UTF8Encoding(false));
             while (fileBytesToRead > 0)
             {
                 byte[] bytes = new byte[byteCount];
-                int readCount = stream.Read(bytes, 0, byteCount);//ReadBytes(stream, byteCount); //przeczytaj n-bytów
+                int readCount = stream.Read(bytes, 0, byteCount);//przeczytaj n-bytów
                 fileBytesToRead -= readCount; //pomiejsz liczbę do przeczytania
-                byte[] encryptedBytes = BigInteger.ModPow(new BigInteger(bytes), key.e, key.n).ToByteArray();
-                writeStream.Write(encryptedBytes);
+                BigInteger temp3 = new BigInteger(bytes);
+                BigInteger encryptedData = BigInteger.ModPow(temp3, key.e, key.n);
+                //writeStream.Write(encryptedData.ToByteArray());
+                byte[] bytesToSave = encryptedData.ToByteArray();
+                string base64 = Convert.ToBase64String(bytesToSave);
+                writer.Write(base64);
             }
             stream.Close();
+            writer.Close();
             writeStream.Close();
-            DecryptData(saveFileName, key,test);
+            DecryptData(saveFileName, key);
         }
-        public static void DecryptData(string fileName, RSAKey key,BigInteger test)
+        public static void DecryptData(string fileName, RSAKey key)
         {
             FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             string[] temp = fileName.Split('.');
             string saveFileName = temp[0] + "_decrypted.svg";
-            int byteCount = 16;
+            int byteCount = 4;
             FileStream writeStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write);
+            BinaryWriter writer = new BinaryWriter(writeStream, Encoding.UTF8);
             int fileBytesToRead = (int)stream.Length;
-            Trace.WriteLine("m="+BigInteger.ModPow(test,key.d,key.n));
             while (fileBytesToRead > 0)
             {
                 byte[] bytes = new byte[byteCount];
                 int readCount = stream.Read(bytes, 0, byteCount);//ReadBytes(stream, byteCount); //przeczytaj n-bytów
                 fileBytesToRead -= readCount; //pomiejsz liczbę do przeczytania
-                byte[] encryptedBytes = BigInteger.ModPow(new BigInteger(bytes), key.d, key.n).ToByteArray();
-                writeStream.Write(encryptedBytes);
+                //Array.Reverse(bytes);
+                string testowy = Encoding.UTF8.GetString(bytes);
+                
+                BigInteger decryptedFormString = new BigInteger(Convert.FromBase64String(testowy));
+                BigInteger temp2 = BigInteger.ModPow(decryptedFormString, key.d, key.n);
+                byte[] decryptedData = temp2.ToByteArray();
+                //Encoding.UTF8.ToString()
+                writer.Write(decryptedData);
             }
             stream.Close();
+            writer.Close();
             writeStream.Close();
         }
 
@@ -67,5 +90,12 @@ namespace SVGReader.RSA
             }
             return buffer;
         }
+        private static byte[] addPadding(byte[] array,int length)
+        {
+            byte[] newArray = new byte[length];
+            Array.Copy(array, 0, newArray, length - array.Length, array.Length);
+            return newArray;
+        }
+
     }
 }
