@@ -95,7 +95,7 @@ namespace SVGReader.RSA
                             }
                         }
                         decryptedData.Xor(CBC_seed);
-                        CBC_seed = new BitArray(bytes);
+                        CBC_seed = new BitArray(Convert.FromBase64String(testowy));
                         bytes = new byte[4];
                         decryptedData.CopyTo(bytes, 0);
 
