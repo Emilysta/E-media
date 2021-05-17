@@ -16,9 +16,9 @@ namespace SVGReader
         {
             InitializeComponent();
             myID = FileManager.GetID();
-            imagetab = new ImageTab(myID,this);
-            metatab = new MetaTab(myID,this);
-            fouriertab = new FourierTab(myID,this);
+            imagetab = new ImageTab(myID, this);
+            metatab = new MetaTab(myID, this);
+            fouriertab = new FourierTab(myID, this);
             removedtab = new ImageAfterRemove(myID, this);
             imagetab.StartMethod();
             metatab.StartMethod();
@@ -70,12 +70,13 @@ namespace SVGReader
 
         private void CypherButton_Click(object sender, RoutedEventArgs e)
         {
+            //var key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter += "Scalable Vector Graphics | *.svg";
             if (dialog.ShowDialog() ?? false)
             {
-                var key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
-                RSA.RSA.EncryptData(dialog.FileName, key);
+                var key = RSA.RSAKeyGenerator.GenerateKeyPair(1024);
+                RSA.RSAcbc.EncryptData(dialog.FileName, key);
             }
         }
     }

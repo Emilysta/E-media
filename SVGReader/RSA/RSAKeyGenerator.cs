@@ -1,12 +1,12 @@
-﻿using System;
+﻿using BigPrimeNumber;
+using BigPrimeNumber.Primality.Heuristic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading;
-using BigPrimeNumber;
-using BigPrimeNumber.Primality.Heuristic;
 
 namespace SVGReader.RSA
 {
@@ -28,11 +28,11 @@ namespace SVGReader.RSA
             uint length1 = (keyLength / 8) / 2 + offset;
             uint length2 = (keyLength / 8) / 2 - offset;
 
-            BigInteger p = new BigInteger();
-            BigInteger q = new BigInteger();
+            BigInteger p = new BigInteger(0);
+            BigInteger q = new BigInteger(0);
 
 
-            Thread thread1 = new Thread(async () =>
+            Thread thread1 = new Thread(() =>
             {
                 var isPrime = false;
                 while (!isPrime)
@@ -40,11 +40,13 @@ namespace SVGReader.RSA
                     p = new BigInteger(GenerateRandomBigInteger(length1));
                     if (p.Sign == -1)
                         p = -p;
-                    isPrime = await p.IsPrime(new RobinMillerTest(200));
+                    isPrime = p.IsPrime(new RobinMillerTest(10000)).Result;
                 }
+                //if (IsPrime(p))
+                    Trace.WriteLine("Watek p koniec");
             });
             thread1.Start();
-            Thread thread2 = new Thread(async () =>
+            Thread thread2 = new Thread(() =>
             {
                 var isPrime = false;
                 while (!isPrime)
@@ -52,16 +54,18 @@ namespace SVGReader.RSA
                     q = new BigInteger(GenerateRandomBigInteger(length2));
                     if (q.Sign == -1)
                         q = -q;
-                    isPrime = await q.IsPrime(new RobinMillerTest(50));
+                    isPrime = q.IsPrime(new RobinMillerTest(10000)).Result;
                 }
+                //if (IsPrime(q))
+                    Trace.WriteLine("Watek q koniec");
             });
             thread2.Start();
             thread1.Join();
             thread2.Join();
 
-            BigInteger n = BigInteger.Multiply(p,q);
-            BigInteger h = LeastCommonMultiple(p - 1, q - 1);
-            BigInteger e = 65537;// GenerateEValue(n, p, q);
+            BigInteger n = p * q;
+            BigInteger h = (p - 1) * (q - 1);
+            BigInteger e = 65537;
             BigInteger d = ModularInverse(e, (p - 1) * (q - 1));
 
             Trace.WriteLine("p=" + p.ToString());
@@ -78,25 +82,7 @@ namespace SVGReader.RSA
 
         }
 
-        private static BigInteger GenerateEValue(BigInteger n, BigInteger p, BigInteger q)
-        {
-            while (true)
-            {
-                byte[] bytes = new byte[n.GetByteCount(true)];
-                using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
-                {
-                    rng.GetBytes(bytes);
-                }
-                BigInteger dupa = new BigInteger(bytes);
-                if (dupa.Sign == -1)
-                    dupa = -dupa;
-                if (dupa < n && dupa > 1)
-                    if (GreatestCommonDivisor(dupa, (p - 1) * (q - 1)) == 1)
-                        return dupa;
-            }
-        }
-
-        private static byte[] GenerateRandomBigInteger(uint bytesLength)
+        public static byte[] GenerateRandomBigInteger(uint bytesLength)
         {
             byte[] bytes = new byte[bytesLength];
             using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
@@ -123,7 +109,7 @@ namespace SVGReader.RSA
             return value1;
         }
 
-        public static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
+        private static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
         {
             BigInteger inv, u1, u3, v1, v3, t1, t3, q, iter;
             /* Step X1. Initialise */
@@ -153,6 +139,23 @@ namespace SVGReader.RSA
             else
                 inv = u1;
             return inv;
+        }
+
+        private static bool IsPrime(BigInteger value)
+        {
+            if (value == 2 || value == 3)
+                return true;
+            else if (value <= 1 || (value % 2) == 0 || value % 3 == 0)
+                return false;
+
+            BigInteger i = 5;
+            while ((i ^ 2) <= value)
+            {
+                if ((value % i) == 0 || (value % (i + 2) == 0))
+                    return false;
+                i += 6;
+            }
+            return true;
         }
     }
 }
