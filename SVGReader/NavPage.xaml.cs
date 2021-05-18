@@ -70,12 +70,13 @@ namespace SVGReader
 
         private void CypherButton_Click(object sender, RoutedEventArgs e)
         {
-            //var key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter += "Scalable Vector Graphics | *.svg";
+            dialog.Filter += "Scalable Vector Graphics | *.svg|All files (*.*)|*.*";
             if (dialog.ShowDialog() ?? false)
             {
-                var key = RSA.RSAKeyGenerator.GenerateKeyPair(1024);
+                var key = new RSA.RSAKey();
+                if (!key.ReadConfig("config.rsa"))
+                    key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
                 RSA.RSAcbc.EncryptData(dialog.FileName, key);
             }
         }

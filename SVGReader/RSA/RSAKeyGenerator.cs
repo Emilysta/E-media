@@ -10,12 +10,6 @@ using System.Threading;
 
 namespace SVGReader.RSA
 {
-    public class RSAKey
-    {
-        public BigInteger n;
-        public BigInteger e;
-        public BigInteger d;
-    }
     class RSAKeyGenerator
     {
         private static List<uint> m_validKeyLengths = new List<uint>() { 256, 512, 1024, 2048, 4096 };
@@ -40,10 +34,9 @@ namespace SVGReader.RSA
                     p = new BigInteger(GenerateRandomBigInteger(length1));
                     if (p.Sign == -1)
                         p = -p;
-                    isPrime = p.IsPrime(new RobinMillerTest(10000)).Result;
+                    isPrime = p.IsPrime(new RobinMillerTest(20000)).Result;
                 }
-                //if (IsPrime(p))
-                    Trace.WriteLine("Watek p koniec");
+                Trace.WriteLine("Watek p koniec");
             });
             thread1.Start();
             Thread thread2 = new Thread(() =>
@@ -54,10 +47,9 @@ namespace SVGReader.RSA
                     q = new BigInteger(GenerateRandomBigInteger(length2));
                     if (q.Sign == -1)
                         q = -q;
-                    isPrime = q.IsPrime(new RobinMillerTest(10000)).Result;
+                    isPrime = q.IsPrime(new RobinMillerTest(20000)).Result;
                 }
-                //if (IsPrime(q))
-                    Trace.WriteLine("Watek q koniec");
+                Trace.WriteLine("Watek q koniec");
             });
             thread2.Start();
             thread1.Join();
@@ -73,13 +65,23 @@ namespace SVGReader.RSA
             Trace.WriteLine("n=" + n.ToString());
             Trace.WriteLine("e=" + e.ToString());
             Trace.WriteLine("d=" + d.ToString());
-            return new RSAKey
+            RSAKey key = new RSAKey
             {
+                n = n,
                 e = e,
                 d = d,
-                n = n
+                p = p,
+                q = q
             };
-
+            try
+            {
+                key.SaveConfig();
+            }
+            catch
+            {
+                key = GenerateKeyPair(keyLength);
+            }
+            return key;
         }
 
         public static byte[] GenerateRandomBigInteger(uint bytesLength)
@@ -109,7 +111,7 @@ namespace SVGReader.RSA
             return value1;
         }
 
-        private static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
+        public static BigInteger ModularInverse(BigInteger value, BigInteger modulus)
         {
             BigInteger inv, u1, u3, v1, v3, t1, t3, q, iter;
             /* Step X1. Initialise */
