@@ -11,6 +11,12 @@ namespace SVGReader.RSA
         public BigInteger n = 0;
         public BigInteger p = 0;
         public BigInteger q = 0;
+
+        public bool isValid()
+        {
+            if (d == 0 || e == 0 | n == 0) return false;
+            return true;
+        }
         public bool ReadConfig(string fileName)
         {
             try

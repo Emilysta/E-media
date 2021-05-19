@@ -34,14 +34,14 @@ namespace SVGReader
 
         private void RenderFourierTransform()
         {
-            XMLNode node = navPage.metatab.Nodes.Find(x => x.Name == "svg");
-            int width = (int)navPage.imagetab.SVGImage.ActualWidth;
-            int height = (int)navPage.imagetab.SVGImage.ActualHeight;
+            XMLNode node = navPage.metaTab.Nodes.Find(x => x.Name == "svg");
+            int width = (int)navPage.imageTab.SVGImage.ActualWidth;
+            int height = (int)navPage.imageTab.SVGImage.ActualHeight;
             var renderBitmap = new RenderTargetBitmap(width,height, 96, 96,PixelFormats.Pbgra32);
 
             var visualBrush = new VisualBrush
             {
-                Visual = navPage.imagetab.SVGImage,
+                Visual = navPage.imageTab.SVGImage,
                 Stretch = Stretch.Uniform
             };
             System.Windows.Size size = new System.Windows.Size(width,height);

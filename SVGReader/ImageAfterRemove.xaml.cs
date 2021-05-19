@@ -34,7 +34,7 @@ namespace SVGReader
         public void StartMethod()
         {
 
-            List<XMLNode> nodes = navPage.metatab.Nodes;
+            List<XMLNode> nodes = navPage.metaTab.Nodes;
 
             List<string> metaToRemove = new List<string> { "?xml", "!DOCTYPE", "metadata", "title", "desc" };
             foreach (string metaName in metaToRemove)

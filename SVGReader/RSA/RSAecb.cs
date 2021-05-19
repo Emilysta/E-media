@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SVGReader.RSA
 {
-    public static class RSA
+    public static class RSAecb
     {
         public static void DecryptData(string fileName, RSAKey key)
         {
@@ -73,7 +73,6 @@ namespace SVGReader.RSA
             }
             readStream.Close();
             writeStream.Close();
-            DecryptData(saveFileName, key);
         }
     }
 }

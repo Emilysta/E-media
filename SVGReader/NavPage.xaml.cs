@@ -8,44 +8,49 @@ namespace SVGReader
     public partial class NavPage : Page
     {
         private int myID;
-        public ImageTab imagetab;
-        public MetaTab metatab;
-        public FourierTab fouriertab;
-        public ImageAfterRemove removedtab;
+        public ImageTab imageTab;
+        public MetaTab metaTab;
+        public FourierTab fourierTab;
+        public ImageAfterRemove removedTab;
+        public RSAPage rsaTab;
         public NavPage()
         {
             InitializeComponent();
             myID = FileManager.GetID();
-            imagetab = new ImageTab(myID, this);
-            metatab = new MetaTab(myID, this);
-            fouriertab = new FourierTab(myID, this);
-            removedtab = new ImageAfterRemove(myID, this);
-            imagetab.StartMethod();
-            metatab.StartMethod();
-            //fouriertab.StartMethod();
-            //removedtab.StartMethod();
+            imageTab = new ImageTab(myID, this);
+            metaTab = new MetaTab(myID, this);
+            fourierTab = new FourierTab(myID, this);
+            removedTab = new ImageAfterRemove(myID, this);
+            rsaTab = new RSAPage();
+            imageTab.StartMethod();
+            metaTab.StartMethod();
             SetContentToImagetab();
         }
         private void SetContentToMetatab()
         {
-            NavContentFrame.Navigate(metatab);
+            NavContentFrame.Navigate(metaTab);
         }
 
         private void SetContentToImagetab()
         {
-            NavContentFrame.Navigate(imagetab);
+            NavContentFrame.Navigate(imageTab);
         }
 
         private void SetContentToFouriertab()
         {
-            NavContentFrame.Navigate(fouriertab);
-            fouriertab.StartMethod();
+            NavContentFrame.Navigate(fourierTab);
+            fourierTab.StartMethod();
         }
 
         private void SetContentToRemovedtab()
         {
-            NavContentFrame.Navigate(removedtab);
-            removedtab.StartMethod();
+            NavContentFrame.Navigate(removedTab);
+            removedTab.StartMethod();
+        }
+
+        private void SetContentToEncryption()
+        {
+            NavContentFrame.Navigate(rsaTab);
         }
 
         private void MetadataButton_Click(object sender, RoutedEventArgs e)
@@ -70,15 +75,7 @@ namespace SVGReader
 
         private void CypherButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter += "Scalable Vector Graphics | *.svg|All files (*.*)|*.*";
-            if (dialog.ShowDialog() ?? false)
-            {
-                var key = new RSA.RSAKey();
-                if (!key.ReadConfig("config.rsa"))
-                    key = RSA.RSAKeyGenerator.GenerateKeyPair(512);
-                RSA.RSAcbc.EncryptData(dialog.FileName, key);
-            }
+            SetContentToEncryption();
         }
     }
 }

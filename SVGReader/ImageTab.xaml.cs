@@ -31,7 +31,7 @@ namespace SVGReader
         private async void OpenFile(string file)
         {
             SVGImage.Source = new Uri(file);
-            navPage.fouriertab.NormalImageControl.Source = new Uri(file);
+            navPage.fourierTab.NormalImageControl.Source = new Uri(file);
         }
     }
 }
