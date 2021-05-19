@@ -12,13 +12,14 @@ namespace SVGReader.RSA
     {
 
         private static BitArray m_initializationVector;
+        private static int byteCount=0;
 
         public static void DecryptData(string fileName, RSAKey key)
         {
             string[] temp = fileName.Split('.');
-            string saveFileName = temp[0] + "_decrypted";
+            string saveFileName = temp[0] + "_decryptedCBC";
             if (temp.Length == 2)
-                saveFileName = temp[0] + "_decrypted." + temp[1];
+                saveFileName = temp[0] + "_decryptedCBC." + temp[1];
 
             FileStream readStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             FileStream writeStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write);
@@ -39,8 +40,8 @@ namespace SVGReader.RSA
                         string testowy = Encoding.UTF8.GetString(bytes);
 
                         BigInteger decryptedFormString = new BigInteger(Convert.FromBase64String(testowy));
-                        BigInteger temp2 = BigInteger.ModPow(decryptedFormString, key.d, key.n);
-                        BitArray decryptedData = new BitArray(temp2.ToByteArray());
+                        BigInteger modPowValue = BigInteger.ModPow(decryptedFormString, key.d, key.n);
+                        BitArray decryptedData = new BitArray(modPowValue.ToByteArray());
                         if (decryptedData.Length != CBC_seed.Length)
                         {
                             BitArray seedCopy = new BitArray(CBC_seed);
@@ -70,15 +71,15 @@ namespace SVGReader.RSA
         public static void EncryptData(string fileName, RSAKey key)
         {
             string[] temp = fileName.Split('.');
-            string saveFileName = temp[0] + "_encrypted";
+            string saveFileName = temp[0] + "_encryptedCBC";
             if (temp.Length == 2)
-                saveFileName = temp[0] + "_encrypted." + temp[1];
+                saveFileName = temp[0] + "_encryptedCBC." + temp[1];
+            SetByteCount(key);
 
             FileStream readStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             FileStream writeStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write);
 
             int fileBytesToRead = (int)readStream.Length;
-            int byteCount = 50;
             m_initializationVector = GenerateInitializationVector((uint)byteCount);
             BitArray CBC_seed = m_initializationVector;
             using (StreamWriter writer = new StreamWriter(writeStream))
@@ -100,8 +101,8 @@ namespace SVGReader.RSA
                     }
                     array.Xor(CBC_seed);
                     array.CopyTo(bytes, 0);
-                    BigInteger temp3 = new BigInteger(bytes);
-                    BigInteger encryptedData = BigInteger.ModPow(temp3, key.e, key.n);
+                    BigInteger numberFromBytes = new BigInteger(bytes);
+                    BigInteger encryptedData = BigInteger.ModPow(numberFromBytes, key.e, key.n);
                     byte[] bytesToSave = encryptedData.ToByteArray();
                     CBC_seed = new BitArray(bytesToSave);
                     string base64 = Convert.ToBase64String(bytesToSave);
@@ -111,12 +112,17 @@ namespace SVGReader.RSA
             }
             readStream.Close();
             writeStream.Close();
-            DecryptData(saveFileName, key);
         }
         private static BitArray GenerateInitializationVector(uint bytesCount)
         {
             BitArray arr = new BitArray(RSAKeyGenerator.GenerateRandomBigInteger(bytesCount));
             return arr;
+        }
+
+        private static void SetByteCount(RSAKey key)
+        {
+            var rand = new Random();
+            byteCount = rand.Next(25, key.n.GetByteCount() - 1);
         }
 
     }

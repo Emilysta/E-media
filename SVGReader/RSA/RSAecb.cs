@@ -7,18 +7,17 @@ namespace SVGReader.RSA
 {
     public static class RSAecb
     {
+        private static int byteCount = 0;
         public static void DecryptData(string fileName, RSAKey key)
         {
             string[] temp = fileName.Split('.');
-            string saveFileName = temp[0] + "_decrypted";
+            string saveFileName = temp[0] + "_decryptedECB";
             if (temp.Length == 2)
-                saveFileName = temp[0] + "_decrypted." + temp[1];
+                saveFileName = temp[0] + "_decryptedECB." + temp[1];
 
             FileStream readStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             FileStream writeStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write);
 
-            int byteCount = 4;
-            int fileBytesToRead = (int)readStream.Length;
             using (StreamWriter writer = new StreamWriter(writeStream))
             {
                 using (StreamReader sr = new StreamReader(readStream))
@@ -26,15 +25,12 @@ namespace SVGReader.RSA
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        byte[] bytes = new byte[byteCount];
-                        int readCount = line.Length;
-                        fileBytesToRead -= readCount;
-                        bytes = Encoding.UTF8.GetBytes(line);
+                        byte[] bytes = Encoding.UTF8.GetBytes(line);
                         string testowy = Encoding.UTF8.GetString(bytes);
 
                         BigInteger decryptedFormString = new BigInteger(Convert.FromBase64String(testowy));
-                        BigInteger temp2 = BigInteger.ModPow(decryptedFormString, key.d, key.n);
-                        byte[] decryptedData = temp2.ToByteArray();
+                        BigInteger modPowValue = BigInteger.ModPow(decryptedFormString, key.d, key.n);
+                        byte[] decryptedData = modPowValue.ToByteArray();
                         writer.Write(Encoding.UTF8.GetString(decryptedData));
                     }
                 }
@@ -46,15 +42,16 @@ namespace SVGReader.RSA
         public static void EncryptData(string fileName, RSAKey key)
         {
             string[] temp = fileName.Split('.');
-            string saveFileName = temp[0] + "_encrypted";
+            string saveFileName = temp[0] + "_encryptedECB";
             if (temp.Length == 2)
-                saveFileName = temp[0] + "_encrypted." + temp[1];
+                saveFileName = temp[0] + "_encryptedECB." + temp[1];
+
+            SetByteCount(key);
 
             FileStream readStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             FileStream writeStream = new FileStream(saveFileName, FileMode.Create, FileAccess.Write);
 
             int fileBytesToRead = (int)readStream.Length;
-            int byteCount = 4;
 
             using (StreamWriter writer = new StreamWriter(writeStream))
             {
@@ -63,8 +60,8 @@ namespace SVGReader.RSA
                     byte[] bytes = new byte[byteCount];
                     int readCount = readStream.Read(bytes, 0, byteCount);//przeczytaj n-bytów
                     fileBytesToRead -= readCount; //pomiejsz liczbę do przeczytania
-                    BigInteger temp3 = new BigInteger(bytes);
-                    BigInteger encryptedData = BigInteger.ModPow(temp3, key.e, key.n);
+                    BigInteger numberFromBytes = new BigInteger(bytes);
+                    BigInteger encryptedData = BigInteger.ModPow(numberFromBytes, key.e, key.n);
                     byte[] bytesToSave = encryptedData.ToByteArray();
                     string base64 = Convert.ToBase64String(bytesToSave);
                     writer.Write(base64 + "\n");
@@ -73,6 +70,12 @@ namespace SVGReader.RSA
             }
             readStream.Close();
             writeStream.Close();
+        }
+
+        private static void SetByteCount(RSAKey key)
+        { 
+            var rand = new Random();
+            byteCount = rand.Next(25, key.n.GetByteCount() - 1);
         }
     }
 }

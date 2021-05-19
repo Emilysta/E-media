@@ -30,8 +30,9 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -39,38 +40,82 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Private Key</Label>
-        <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Public Key</Label>
-        <TextBox x:Name="PrivateKeyBox" Text="{Binding PrivateKey}" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Margin="5" VerticalScrollBarVisibility="Auto"/>
-        <TextBox x:Name="PublicKeyBox" Text="{Binding PublicKey}" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Margin="5" VerticalScrollBarVisibility="Auto"/>
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="#707070" Width="5" ShowsPreview="true"/>
+        
+        <Border Grid.Row="0" Grid.Column="0" Background="#808080" CornerRadius="5" Margin="5">
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="LightGray" FontSize="20">Private Key</Label>
+        </Border>
+        <Border Grid.Row="0" Grid.Column="2" Background="#808080" CornerRadius="5" Margin="5">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="LightGray" FontSize="20">Public Key</Label>
+        </Border>
+        
+        <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" CornerRadius="5" Background="DarkGray"  Margin="5">
+            <TextBox x:Name="PrivateKeyBox" Text="{Binding PrivateKey}" VerticalScrollBarVisibility="Auto" Background="Transparent" Margin="5"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" CornerRadius="5" Background="DarkGray"  Margin="5">
+            <TextBox x:Name="PublicKeyBox" Text="{Binding PublicKey}" Margin="5" VerticalScrollBarVisibility="Auto" Background="Transparent"/>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="0" Background="LightGray" CornerRadius="5" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Content="Key Parameters" Grid.ColumnSpan="2" Foreground="#303030" FontWeight="Bold" VerticalAlignment="Top" HorizontalAlignment="Center" />
+                <Label Content="Size Of Key: " Foreground="#303030" FontWeight="Bold" VerticalAlignment="Bottom" Margin="15 0"/>
+                <ComboBox Grid.Row="1" x:Name="KeyLengthBox" VerticalAlignment="Top" FontWeight="Bold"  Margin="15 5 15 0">
+                    <ComboBoxItem>256</ComboBoxItem>
+                    <ComboBoxItem>512</ComboBoxItem>
+                    <ComboBoxItem IsSelected="true">1024</ComboBoxItem>
+                    <ComboBoxItem>2048</ComboBoxItem>
+                    <ComboBoxItem>4096</ComboBoxItem>
+                </ComboBox>
 
-        <Grid Grid.Row="4" Grid.Column="0">
-            <ComboBox x:Name="KeyLengthBox" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Margin="15">
-                <ComboBoxItem>256</ComboBoxItem>
-                <ComboBoxItem>512</ComboBoxItem>
-                <ComboBoxItem IsSelected="true">1024</ComboBoxItem>
-                <ComboBoxItem>2048</ComboBoxItem>
-                <ComboBoxItem>4096</ComboBoxItem>
-            </ComboBox>
-            <Button HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Margin="15" Click="GenerateKey_Handler">Regenerate RSA Key Pair</Button>
-        </Grid>
+                <Button Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" FontWeight="Bold"  Margin="15 8 15 0"  Click="GenerateKey_Handler">Regenerate RSA Key Pair</Button>
+            </Grid>
+        </Border>
 
-        <Grid Grid.Row="4" Grid.Column="1">
+        <Grid Grid.Row="4" Grid.Column="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="3*"/>
-            </Grid.RowDefinitions>
-            <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Electronic Code Book</Label>
-            <Button x:Name="Button1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Margin="15" Click="DecryptButton_Handler">Decrypt file</Button>
-            <Button x:Name="Button2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Margin="15" Click="EncryptButton_Handler">Encrypt file</Button>
 
-            <Label Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">Cipher block chaining</Label>
-            <Button x:Name="Button3" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Margin="15" Click="DecryptButtonCBC_Handler">Decrypt file</Button>
-            <Button x:Name="Button4" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Margin="15" Click="EncryptButtonCBC_Handler">Encrypt file</Button>
+            <Border Grid.RowSpan="2" Background="LightGray" CornerRadius="5" Margin="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#303030" FontWeight="Bold">Electronic Code Book</Label>
+                    <Button x:Name="Button1" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="DecryptButton_Handler">Decrypt file</Button>
+                    <Button x:Name="Button2" Grid.Row="1"  Grid.Column="0" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="EncryptButton_Handler">Encrypt file</Button>
+                </Grid>
+            </Border>
+            <Border Grid.RowSpan="2" Grid.Column="1" Background="LightGray" CornerRadius="5" Margin="5
+                    ">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#303030" FontWeight="Bold">Cipher block chaining</Label>
+                    <Button x:Name="Button3" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="DecryptButtonCBC_Handler">Decrypt file</Button>
+                    <Button x:Name="Button4" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="EncryptButtonCBC_Handler">Encrypt file</Button>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </Page>
