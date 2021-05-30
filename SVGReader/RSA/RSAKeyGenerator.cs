@@ -19,8 +19,8 @@ namespace SVGReader.RSA
                 throw new Exception("Key length is not supported.\nSupported Lengths:256,512,1024,2048,4096");
 
             uint offset = 1;
-            uint length1 = (keyLength / 8) / 2 + offset;
-            uint length2 = (keyLength / 8) / 2 - offset;
+            uint length1 = (keyLength / 8) / 2;
+            uint length2 = (keyLength / 8) - length1;
 
             BigInteger p = new BigInteger(0);
             BigInteger q = new BigInteger(0);
@@ -87,10 +87,13 @@ namespace SVGReader.RSA
         public static byte[] GenerateRandomBigInteger(uint bytesLength)
         {
             byte[] bytes = new byte[bytesLength];
-            using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
+            do
             {
-                rng.GetBytes(bytes);
-            }
+                using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
+                {
+                    rng.GetBytes(bytes);
+                }
+            } while (bytes[0] == 0);
             return bytes;
         }
 

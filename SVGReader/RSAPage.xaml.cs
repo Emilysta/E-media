@@ -93,7 +93,7 @@ namespace SVGReader
             if (OpenFile(out string fileName))
             {
                 RSAecb.DecryptData(fileName, RsaKey);
-                string message = "Odszyfrowano plik: "+fileName;
+                string message = "Odszyfrowano plik: " + fileName;
                 string caption = "Informacja";
 
                 var result = MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
@@ -132,6 +132,18 @@ namespace SVGReader
             {
                 RSAcbc.EncryptData(fileName, RsaKey);
                 string message = "Zaszyfrowano plik: " + fileName;
+                string caption = "Informacja";
+
+                var result = MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void MSC_decryptButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (OpenFile(out string fileName))
+            {
+                RSAecb.DecryptDataWithMicrosoft(fileName, RsaKey);
+                string message = "Odszyfrowano plik za pomocą RSACryptoServiceProvider: " + fileName;
                 string caption = "Informacja";
 
                 var result = MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);

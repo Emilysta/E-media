@@ -41,19 +41,19 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="#707070" Width="5" ShowsPreview="true"/>
-        
+
         <Border Grid.Row="0" Grid.Column="0" Background="#808080" CornerRadius="5" Margin="5">
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="LightGray" FontSize="20">Private Key</Label>
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="LightGray" FontSize="20">Private Key</Label>
         </Border>
         <Border Grid.Row="0" Grid.Column="2" Background="#808080" CornerRadius="5" Margin="5">
             <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="LightGray" FontSize="20">Public Key</Label>
         </Border>
-        
+
         <Border Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" CornerRadius="5" Background="DarkGray"  Margin="5">
-            <TextBox x:Name="PrivateKeyBox" Text="{Binding PrivateKey}" VerticalScrollBarVisibility="Auto" Background="Transparent" Margin="5"/>
+            <TextBox x:Name="PrivateKeyBox" Text="{Binding PrivateKey}" VerticalScrollBarVisibility="Auto" Background="Transparent" Margin="5" IsReadOnly="True" IsReadOnlyCaretVisible="false"/>
         </Border>
         <Border Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" CornerRadius="5" Background="DarkGray"  Margin="5">
-            <TextBox x:Name="PublicKeyBox" Text="{Binding PublicKey}" Margin="5" VerticalScrollBarVisibility="Auto" Background="Transparent"/>
+            <TextBox x:Name="PublicKeyBox" Text="{Binding PublicKey}" Margin="5" VerticalScrollBarVisibility="Auto" Background="Transparent" IsReadOnly="True" IsReadOnlyCaretVisible="false"/>
         </Border>
         <Border Grid.Row="4" Grid.Column="0" Background="LightGray" CornerRadius="5" Margin="5">
             <Grid>
@@ -98,6 +98,7 @@
                     <Label Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Foreground="#303030" FontWeight="Bold">Electronic Code Book</Label>
                     <Button x:Name="Button1" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="DecryptButton_Handler">Decrypt file</Button>
                     <Button x:Name="Button2" Grid.Row="1"  Grid.Column="0" VerticalAlignment="Top" FontWeight="Bold" Margin="8" Click="EncryptButton_Handler">Encrypt file</Button>
+                    <Button x:Name="MSC_decryptButton" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Bottom" FontWeight="Bold" Margin="8" Click="MSC_decryptButton_Click">MSC Decrypt</Button>
                 </Grid>
             </Border>
             <Border Grid.RowSpan="2" Grid.Column="1" Background="LightGray" CornerRadius="5" Margin="5

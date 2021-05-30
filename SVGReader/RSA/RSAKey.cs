@@ -34,6 +34,10 @@ namespace SVGReader.RSA
                     e = BigInteger.Parse(line.Split(':')[1]);
                     line = sr.ReadLine();
                     d = BigInteger.Parse(line.Split(':')[1]);
+                    line = sr.ReadLine();
+                    p = BigInteger.Parse(line.Split(':')[1]);
+                    line = sr.ReadLine();
+                    q = BigInteger.Parse(line.Split(':')[1]);
                     return true;
                 }
             }
