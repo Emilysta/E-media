@@ -33,6 +33,7 @@
     <PackageReference Include="AForge.Math" Version="2.2.5" />
     <PackageReference Include="SharpVectors" Version="1.7.1" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="System.Security.Cryptography.OpenSsl" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

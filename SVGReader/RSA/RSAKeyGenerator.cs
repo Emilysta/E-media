@@ -18,9 +18,8 @@ namespace SVGReader.RSA
             if (!m_validKeyLengths.Any(x => x == keyLength))
                 throw new Exception("Key length is not supported.\nSupported Lengths:256,512,1024,2048,4096");
 
-            uint offset = 1;
             uint length1 = (keyLength / 8) / 2;
-            uint length2 = (keyLength / 8) - length1;
+            uint length2 = (keyLength / 8) / 2;
 
             BigInteger p = new BigInteger(0);
             BigInteger q = new BigInteger(0);

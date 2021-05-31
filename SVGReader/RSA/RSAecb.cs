@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -59,20 +57,23 @@ namespace SVGReader.RSA
                     {
                         RSAParameters rsaKey = new RSAParameters();
                         rsaKey.Modulus = key.n.ToByteArray();
+                        rsaKey.Exponent = key.e.ToByteArray();
                         rsaKey.D = key.d.ToByteArray();
+                        rsaKey.P = key.p.ToByteArray();
+                        rsaKey.Q = key.q.ToByteArray();
+                        rsaKey.DQ = (key.d % (key.q - 1)).ToByteArray();
+                        rsaKey.DP = (key.d % (key.p - 1)).ToByteArray();
+                        rsaKey.InverseQ = RSAKeyGenerator.ModularInverse(key.q, key.p).ToByteArray();
                         crypto.ImportParameters(rsaKey);
 
-                        string text = sr.ReadToEnd();
-                        byte[] decryptedData = crypto.Decrypt(Convert.FromBase64String(text), true);
-                        writer.Write(Encoding.UTF8.GetString(decryptedData));
-                        //string line;
-                        //while ((line = sr.ReadLine()) != null)
-                        //{
-                        //    byte[] bytes = Encoding.UTF8.GetBytes(line);
-                        //    string testowy = Encoding.UTF8.GetString(bytes);
-                        //    byte[] decryptedData = crypto.Decrypt(Convert.FromBase64String(testowy), RSAEncryptionPadding.Pkcs1);
-                        //    writer.Write(Encoding.UTF8.GetString(decryptedData));
-                        //}
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            byte[] bytes = Encoding.UTF8.GetBytes(line);
+                            string testowy = Encoding.UTF8.GetString(bytes);
+                            byte[] decryptedData = crypto.Decrypt(Convert.FromBase64String(testowy), RSAEncryptionPadding.Pkcs1);
+                            writer.Write(Encoding.UTF8.GetString(decryptedData));
+                        }
                     }
                 }
             }
@@ -121,7 +122,7 @@ namespace SVGReader.RSA
                             string base64 = Convert.ToBase64String(bytesToSave);
                             writer.Write(base64 + "\n");
 
-                            bytesToSave = crypto.Encrypt(bytes, true);
+                            bytesToSave = crypto.Encrypt(bytes, RSAEncryptionPadding.Pkcs1);
                             base64 = Convert.ToBase64String(bytesToSave);
                             writer2.Write(base64 + "\n");
                         }
