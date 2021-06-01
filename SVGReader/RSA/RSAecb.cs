@@ -117,8 +117,8 @@ namespace SVGReader.RSA
                             BigInteger numberFromBytes = new BigInteger(bytes);
                             BigInteger encryptedData = BigInteger.ModPow(numberFromBytes, key.e, key.n);
                             byte[] bytesToSave = encryptedData.ToByteArray();
-                            if (bytesToSave.Length != key.n.ToByteArray().Length)
-                                bytesToSave = new byte[key.n.ToByteArray().Length - bytesToSave.Length].Concat(bytesToSave).ToArray();
+                            //if (bytesToSave.Length != key.n.ToByteArray().Length)
+                                //bytesToSave = new byte[key.n.ToByteArray().Length - bytesToSave.Length].Concat(bytesToSave).ToArray();
                             string base64 = Convert.ToBase64String(bytesToSave);
                             writer.Write(base64 + "\n");
 
